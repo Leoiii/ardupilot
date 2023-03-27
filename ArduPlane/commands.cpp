@@ -1,5 +1,7 @@
 /*
  *  logic for dealing with the current command in the mission and home location
+ Some comment that Leo Beuken added to check git and build functionality
+ another change now
  */
 
 #include "Plane.h"
