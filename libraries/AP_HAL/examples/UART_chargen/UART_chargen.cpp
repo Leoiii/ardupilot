@@ -50,6 +50,7 @@ void setup(void)
     // uart = hal.serial(2);  // telemetry 2
     // uart = hal.serial(4);  // 2nd GPS
 
+    uart = hal.serial(1); // Leo added code - choose whatever serial I think is necessary
 
     if (uart == nullptr) {
         AP_HAL::panic("bad uart");

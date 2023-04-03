@@ -220,15 +220,15 @@ void RangeFinder::init(enum Rotation orientation_default)
  */
 void RangeFinder::update(void)
 {
-    for (uint8_t i=0; i<num_instances; i++) {
-        if (drivers[i] != nullptr) {
-            if ((Type)params[i].type.get() == Type::NONE) {
+    for (uint8_t i=0; i<num_instances; i++) { //loop through all drivers
+        if (drivers[i] != nullptr) { // skip this driver if drivers contains a null pointer
+            if ((Type)params[i].type.get() == Type::NONE) { // check if rangefinder is of type NONE
                 // allow user to disable a rangefinder at runtime
                 state[i].status = Status::NotConnected;
                 state[i].range_valid_count = 0;
                 continue;
             }
-            drivers[i]->update();
+            drivers[i]->update(); // is this calling the update method in backend serial? Yes. Update is defined as pure virtual function
         }
     }
 #if HAL_LOGGING_ENABLED

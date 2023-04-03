@@ -131,12 +131,14 @@ bool AP_RangeFinder_LeddarOne::CRC16(uint8_t *aBuffer, uint8_t aLength, bool aCh
      24: CRC High
     -----------------------------------------------
   */
+
+ //this could definitely be a useful function for reference
 LeddarOne_Status AP_RangeFinder_LeddarOne::parse_response(uint8_t &number_detections)
 {
     uint8_t index_offset = LEDDARONE_DETECTION_DATA_INDEX_OFFSET;
 
     // read serial
-    uint32_t nbytes = uart->available();
+    uint32_t nbytes = uart->available();  // this could be useful. Number of bytes available in UART buffer
 
     if (nbytes != 0)  {
         for (uint8_t index=read_len; index<nbytes+read_len; index++) {
