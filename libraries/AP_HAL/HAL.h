@@ -20,7 +20,7 @@ class AP_Param;
 
 class AP_HAL::HAL {
 public:
-    HAL(AP_HAL::UARTDriver* _uartA, // console
+    HAL(AP_HAL::UARTDriver* _uartA, // console. These are all inputs to the constructor
         AP_HAL::UARTDriver* _uartB, // 1st GPS
         AP_HAL::UARTDriver* _uartC, // telem1
         AP_HAL::UARTDriver* _uartD, // telem2

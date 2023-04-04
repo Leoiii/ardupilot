@@ -75,6 +75,9 @@ const AP_Scheduler::Task Plane::scheduler_tasks[] = {
     SCHED_TASK(afs_fs_check,           10,    100,  51),
 #endif
     SCHED_TASK(ekf_check,              10,     75,  54),
+    
+    SCHED_TASK_CLASS(UARTTest, &plane.uarttest, write_uart, 1, 20, 55),
+
     SCHED_TASK_CLASS(GCS,            (GCS*)&plane._gcs,       update_receive,   300,  500,  57),
     SCHED_TASK_CLASS(GCS,            (GCS*)&plane._gcs,       update_send,      300,  750,  60),
     SCHED_TASK_CLASS(AP_ServoRelayEvents, &plane.ServoRelayEvents, update_events, 50, 150,  63),
@@ -892,4 +895,4 @@ void Plane::update_current_loc(void)
     relative_altitude *= -1.0f;
 }
 
-AP_HAL_MAIN_CALLBACKS(&plane);
+AP_HAL_MAIN_CALLBACKS(&plane); // I think this is the main entrypoint
