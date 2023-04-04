@@ -60,6 +60,8 @@
 #include <AP_CheckFirmware/AP_CheckFirmware.h>
 #include <Filter/LowPassFilter.h>
 
+#include <uartTest/uart_test.h>
+
 class AP_DDS_Client;
 
 class AP_Vehicle : public AP_HAL::HAL::Callbacks {
@@ -285,6 +287,8 @@ protected:
     AP_Button button;
 #endif
     RangeFinder rangefinder;
+
+    UARTTest uarttest;
 
     AP_RSSI rssi;
 #if HAL_RUNCAM_ENABLED

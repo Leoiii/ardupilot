@@ -10,5 +10,6 @@
         "ostream": "cpp",
         "sstream": "cpp",
         "numeric": "cpp"
-    }
+    },
+    "C_Cpp.dimInactiveRegions": false
 }

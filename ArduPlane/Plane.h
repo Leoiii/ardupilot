@@ -89,6 +89,8 @@
 #include "quadplane.h"
 #include "tuning.h"
 
+#include "uartTest/uart_test.h"
+
 // Configuration
 #include "config.h"
 
@@ -812,6 +814,8 @@ private:
     };
     static const TerrainLookupTable Terrain_lookup[];
 #endif
+
+    void write_uart(void);
 
     // Attitude.cpp
     void adjust_nav_pitch_throttle(void);
