@@ -89,7 +89,7 @@
 #include "quadplane.h"
 #include "tuning.h"
 
-#include "uartTest/uart_test.h"
+#include <AP_uartTest/AP_uart_test.h>
 
 // Configuration
 #include "config.h"

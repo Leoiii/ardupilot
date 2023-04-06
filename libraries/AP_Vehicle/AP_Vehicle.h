@@ -60,7 +60,7 @@
 #include <AP_CheckFirmware/AP_CheckFirmware.h>
 #include <Filter/LowPassFilter.h>
 
-#include <uartTest/uart_test.h>
+#include <AP_uartTest/AP_uart_test.h>
 
 class AP_DDS_Client;
 
