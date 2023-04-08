@@ -62,7 +62,7 @@ void Plane::init_ardupilot()
     rangefinder.init(ROTATION_PITCH_270);
 
     //initialize uart test
-    uarttest.init();
+    uarttest.init(serial_manager);
 
     // initialise battery monitoring
     battery.init();
