@@ -41,9 +41,11 @@ extern const AP_HAL::HAL& hal;
 #endif
 
 #ifndef HAL_SERIAL4_PROTOCOL
-#define SERIAL4_PROTOCOL SerialProtocol_GPS
+#define SERIAL4_PROTOCOL SerialProtocol_Strain
+#define SERIAL4_BAUD AP_SERIALMANAGER_STRAIN_BAUD/1000
 #else
-#define SERIAL4_PROTOCOL HAL_SERIAL4_PROTOCOL
+#define SERIAL4_PROTOCOL SerialProtocol_Strain
+#define SERIAL4_BAUD AP_SERIALMANAGER_MAVLINK_BAUD/1000
 #endif
 
 #ifdef HAL_SERIAL5_PROTOCOL
@@ -55,11 +57,11 @@ extern const AP_HAL::HAL& hal;
 #endif
 
 #ifndef HAL_SERIAL6_PROTOCOL
-#define SERIAL6_PROTOCOL SerialProtocol_None
-#define SERIAL6_BAUD AP_SERIALMANAGER_MAVLINK_BAUD/1000
+#define SERIAL6_PROTOCOL SerialProtocol_Strain
+#define SERIAL6_BAUD AP_SERIALMANAGER_STRAIN_BAUD/1000
 #else
-#define SERIAL6_PROTOCOL HAL_SERIAL6_PROTOCOL
-#define SERIAL6_BAUD HAL_SERIAL6_BAUD
+#define SERIAL6_PROTOCOL SerialProtocol_Strain
+#define SERIAL6_BAUD AP_SERIALMANAGER_MAVLINK_BAUD/1000
 #endif
 
 #ifndef HAL_SERIAL7_PROTOCOL
@@ -136,7 +138,7 @@ const AP_Param::GroupInfo AP_SerialManager::var_info[] = {
     // @Param: 1_PROTOCOL
     // @DisplayName: Telem1 protocol selection
     // @Description: Control what protocol to use on the Telem1 port. Note that the Frsky options require external converter hardware. See the wiki for details.
-    // @Values: -1:None, 1:MAVLink1, 2:MAVLink2, 3:Frsky D, 4:Frsky SPort, 5:GPS, 7:Alexmos Gimbal Serial, 8:SToRM32 Gimbal Serial, 9:Rangefinder, 10:FrSky SPort Passthrough (OpenTX), 11:Lidar360, 13:Beacon, 14:Volz servo out, 15:SBus servo out, 16:ESC Telemetry, 17:Devo Telemetry, 18:OpticalFlow, 19:RobotisServo, 20:NMEA Output, 21:WindVane, 22:SLCAN, 23:RCIN, 24:EFI Serial, 25:LTM, 26:RunCam, 27:HottTelem, 28:Scripting, 29:Crossfire VTX, 30:Generator, 31:Winch, 32:MSP, 33:DJI FPV, 34:AirSpeed, 35:ADSB, 36:AHRS, 37:SmartAudio, 38:FETtecOneWire, 39:Torqeedo, 40:AIS, 41:CoDevESC, 42:DisplayPort, 43:MAVLink High Latency, 44:IRC Tramp
+    // @Values: -1:None, 1:MAVLink1, 2:MAVLink2, 3:Frsky D, 4:Frsky SPort, 5:GPS, 7:Alexmos Gimbal Serial, 8:SToRM32 Gimbal Serial, 9:Rangefinder, 10:FrSky SPort Passthrough (OpenTX), 11:Lidar360, 13:Beacon, 14:Volz servo out, 15:SBus servo out, 16:ESC Telemetry, 17:Devo Telemetry, 18:OpticalFlow, 19:RobotisServo, 20:NMEA Output, 21:WindVane, 22:SLCAN, 23:RCIN, 24:EFI Serial, 25:LTM, 26:RunCam, 27:HottTelem, 28:Scripting, 29:Crossfire VTX, 30:Generator, 31:Winch, 32:MSP, 33:DJI FPV, 34:AirSpeed, 35:ADSB, 36:AHRS, 37:SmartAudio, 38:FETtecOneWire, 39:Torqeedo, 40:AIS, 41:CoDevESC, 42:DisplayPort, 43:MAVLink High Latency, 44:IRC Tramp, 45:Strain
     // @User: Standard
     // @RebootRequired: True
     AP_GROUPINFO("1_PROTOCOL",  1, AP_SerialManager, state[1].protocol, SerialProtocol_MAVLink2),
@@ -188,7 +190,7 @@ const AP_Param::GroupInfo AP_SerialManager::var_info[] = {
     // @CopyFieldsFrom: SERIAL1_BAUD
     // @DisplayName: Serial 4 Baud Rate
     // @Description: The baud rate used for Serial4. Most stm32-based boards can support rates of up to 1500. If you setup a rate you cannot support and then can't connect to your board you should load a firmware from a different vehicle type. That will reset all your parameters to defaults.
-    AP_GROUPINFO("4_BAUD", 8, AP_SerialManager, state[4].baud, AP_SERIALMANAGER_GPS_BAUD/1000),
+    AP_GROUPINFO("4_BAUD", 8, AP_SerialManager, state[4].baud, AP_SERIALMANAGER_STRAIN_BAUD/1000),
 #endif
 
 #if SERIALMANAGER_NUM_PORTS > 5
@@ -525,6 +527,14 @@ void AP_SerialManager::init()
                     // Note init is handled by AP_MSP
                     break;
 #endif
+                case SerialProtocol_Strain:
+                    uart->begin(state[i].baudrate(),
+                    AP_SERIALMANAGER_STRAIN_BUFSIZE_RX,
+                    AP_SERIALMANAGER_STRAIN_BUFSIZE_TX);
+                    uart->set_unbuffered_writes(true);
+                    uart->set_flow_control(AP_HAL::UARTDriver::flow_control::FLOW_CONTROL_DISABLE);
+
+                    break;
                 default:
                     uart->begin(state[i].baudrate());
             }
