@@ -16,6 +16,7 @@ public:
 
     void init(const AP_SerialManager& serial_manager);
     void write_uart();
+    uint8_t counter = 0;
 
     char num = 47;
 
@@ -30,7 +31,8 @@ private:
     void parse_data(void); // parse uart data into strain data
     uint8_t read_buffer[READ_BUFFER_SIZE];
     uint32_t strain_data[NUM_SENSORSS];   
-    uint8_t available_bytes = 0;
+    uint8_t available_bytes1 = 0;
+    uint8_t available_bytes2 = 0;
 
 };
 

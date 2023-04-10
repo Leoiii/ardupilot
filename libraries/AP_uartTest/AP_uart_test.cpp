@@ -42,12 +42,15 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
     //write all data
     //for (uint8_t i = 0; i < 128; i++) {
     if (res) {
-        for (uint8_t i = 0; i<available_bytes; i++) {
-            uart_write->write(read_buffer[i]);
+        for (uint8_t i = 0; i<available_bytes1; i++) {
+            //uart_write->write(read_buffer[i]);
+            uart_write->write(available_bytes1);
+            uart_write->write(available_bytes2);
         }
-        uart_write->write(available_bytes);
+        //uart_write->write(available_bytes);
     }
-    available_bytes = 0; // reset available bytes for next timeS
+    available_bytes1 = 0; // reset available bytes for next timeS
+    available_bytes2 = 0;
     //}
 }
 
@@ -73,13 +76,14 @@ void UARTTest::parse_data() {
 
 bool UARTTest::read_data(void) {
 
-    available_bytes = uart_read->available();
+    available_bytes1 = uart_read->available();
 
-    if (available_bytes != 0) { //check that we have received all bytes from strain data
-        for (uint8_t idx = 0; idx < available_bytes; idx++) {
+    if (available_bytes1 != 0) { //check that we have received all bytes from strain data
+        for (uint8_t idx = 0; idx < available_bytes1; idx++) {
             read_buffer[idx] = uart_read->read();
         } 
         return true;
+        available_bytes2 = uart_read->available();
     }
     return false; 
 } 
