@@ -5,10 +5,6 @@ extern const AP_HAL::HAL& hal;
 void UARTTest::init(const AP_SerialManager& serial_manager) {
     // setup UARTx here
 
-    counter = 0; // initialize counter variable
-
-    hal.scheduler->delay(1000);
-
     // serial mappings according to: https://ardupilot.org/plane/docs/common-holybro-pixhawk6X.html
     //SERIAL0 -> USB
     //SERIAL1 -> UART7 (Telem1) RTS/CTS pins
@@ -21,8 +17,9 @@ void UARTTest::init(const AP_SerialManager& serial_manager) {
     //SERIAL8 -> USB 
 
     //setup UART
-    uart_write = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Strain, 0);
-    uart_read = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Strain, 1);
+    uart_read = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Strain, 0);
+    uart_write = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Strain, 1);
+    
     //uart = hal.serial(6);
     //uart->set_blocking_writes(true);
     
@@ -37,15 +34,21 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
     //const ssize_t ret = uart->write(&counter, dataSize);
 
     //read all data
-    read_data();
+    bool res = read_data();
 
     //parse all data
-    parse_data();
+    //parse_data();
 
     //write all data
-    for (uint8_t i = 0; i < 128; i++) {
-        uart_write->write(read_buffer[i]);
+    //for (uint8_t i = 0; i < 128; i++) {
+    if (res) {
+        for (uint8_t i = 0; i<available_bytes; i++) {
+            uart_write->write(read_buffer[i]);
+        }
+        uart_write->write(available_bytes);
     }
+    available_bytes = 0; // reset available bytes for next timeS
+    //}
 }
 
 void UARTTest::parse_data() {
@@ -55,15 +58,28 @@ void UARTTest::parse_data() {
     }
 }
 
-bool UARTTest::read_data(void) {
+/*bool UARTTest::read_data(void) {
 
     uint32_t nbytes = uart_read->available();
 
     if (nbytes != AP_SERIALMANAGER_STRAIN_BUFSIZE_RX) { //check that we have received all bytes from strain data
         for (uint8_t idx = 0; idx < nbytes; idx++) {
-            read_buffer[idx] = uart->read();
+            read_buffer[idx] = uart_read->read();
         } 
         return true;
     }
     return false; 
-}
+} */
+
+bool UARTTest::read_data(void) {
+
+    available_bytes = uart_read->available();
+
+    if (available_bytes != 0) { //check that we have received all bytes from strain data
+        for (uint8_t idx = 0; idx < available_bytes; idx++) {
+            read_buffer[idx] = uart_read->read();
+        } 
+        return true;
+    }
+    return false; 
+} 

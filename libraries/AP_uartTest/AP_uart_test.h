@@ -7,7 +7,7 @@
 
 #define WRITE_UART_IDX 5 
 
-#define MASK = 0xFF
+//#define MASK 0xFF
 
 class UARTTest 
 { 
@@ -30,6 +30,7 @@ private:
     void parse_data(void); // parse uart data into strain data
     uint8_t read_buffer[READ_BUFFER_SIZE];
     uint32_t strain_data[NUM_SENSORSS];   
+    uint8_t available_bytes = 0;
 
 };
 
