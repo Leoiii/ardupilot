@@ -484,6 +484,15 @@ void AP_Logger::Write_PID(uint8_t msg_type, const AP_PIDInfo &info)
     WriteBlock(&pkt, sizeof(pkt));
 }
 
+void AP_Logger::Write_Strain() {
+    struct log_Strain pkt = {
+    LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG),
+    time_us :   AP_HAL::micros64(),
+    value   :   1234
+};
+    WriteBlock(&pkt, sizeof(pkt));
+}
+
 void AP_Logger::Write_SRTL(bool active, uint16_t num_points, uint16_t max_points, uint8_t action, const Vector3f& breadcrumb)
 {
     const struct log_SRTL pkt_srtl{

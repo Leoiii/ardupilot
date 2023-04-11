@@ -2,6 +2,7 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_SerialManager/AP_SerialManager.h>
 #include <AP_Logger/AP_Logger.h>
+#include <AP_Logger/LogStructure.h>
 #define NUM_SENSORSS 32 // total number of strain sensors
 #define BYTES_PER_SENSOR 4; // bytes per sensor (uint32)
 #define READ_BUFFER_SIZE 128 // there are 32 sensors, each has 4 bytes of data

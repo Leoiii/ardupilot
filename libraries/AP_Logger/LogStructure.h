@@ -684,7 +684,7 @@ struct PACKED log_Strain {
   LOG_PACKET_HEADER;
   uint64_t time_us;
   uint32_t value;
-}
+};
 
 
 // FMT messages define all message formats other than FMT
@@ -1431,7 +1431,7 @@ enum LogMessages : uint8_t {
     LOG_RCOUT2_MSG,
     LOG_RCOUT3_MSG,
     LOG_IDS_FROM_FENCE,
-    LOG_STRAIN_MSG
+    LOG_STRAIN_MSG,
 
     _LOG_LAST_MSG_
 };

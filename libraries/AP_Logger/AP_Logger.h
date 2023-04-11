@@ -286,6 +286,8 @@ public:
 
     void Write_PID(uint8_t msg_type, const class AP_PIDInfo &info);
 
+    void Write_Strain();
+
     // returns true if logging of a message should be attempted
     bool should_log(uint32_t mask) const;
 

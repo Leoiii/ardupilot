@@ -49,6 +49,8 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
     }
     available_bytes = 0; // reset available bytes for next timeS
 
+    //AP_Logger::Write_Strain();
+
     //}
 }
 
@@ -84,12 +86,3 @@ bool UARTTest::read_data(void) {
     }
     return false; 
 } 
-
-void UARTTest::save_data(void) {
-    struct log_test pkt = {
-        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG);
-        time_us :   AP_HAL::micros64();
-        value   :   1234;
-    }
-    logger.WriteBlock(&pkt, sizeof(pkt));
-}
