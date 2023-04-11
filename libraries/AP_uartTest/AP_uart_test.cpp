@@ -45,7 +45,7 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
         for (uint8_t i = 0; i<available_bytes; i++) {
             uart_write->write(read_buffer[i]);
         }
-        //uart_write->write(available_bytes);
+        uart_write->write(available_bytes);
     }
     available_bytes = 0; // reset available bytes for next timeS
 
