@@ -1,6 +1,7 @@
 #pragma once
 #include <AP_HAL/AP_HAL.h>
 #include <AP_SerialManager/AP_SerialManager.h>
+#include <AP_Logger/AP_Logger.h>
 #define NUM_SENSORSS 32 // total number of strain sensors
 #define BYTES_PER_SENSOR 4; // bytes per sensor (uint32)
 #define READ_BUFFER_SIZE 128 // there are 32 sensors, each has 4 bytes of data
@@ -32,6 +33,7 @@ private:
     uint8_t read_buffer[READ_BUFFER_SIZE];
     uint32_t strain_data[NUM_SENSORSS];   
     uint8_t available_bytes = 0;
+    void save_data(void);
 
 };
 
