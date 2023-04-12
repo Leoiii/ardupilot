@@ -35,6 +35,7 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
 
     //read all data
     bool res = read_data();
+    parse_data();
 
     //parse all data
     //parse_data();
@@ -49,7 +50,7 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
     }
     available_bytes = 0; // reset available bytes for next timeS
 
-    //AP_Logger::Write_Strain();
+    Log_Strain(strain_data);
 
     //}
 }
@@ -80,7 +81,7 @@ bool UARTTest::read_data(void) {
 
     available_bytes = uart_read->available();
 
-    if (available_bytes != 0) { //check that we have received all bytes from strain data
+    if (available_bytes == 96) { //check that we have received all bytes from strain data
         for (uint8_t idx = 0; idx < available_bytes; idx++) {
             read_buffer[idx] = uart_read->read();
         } 
@@ -89,53 +90,53 @@ bool UARTTest::read_data(void) {
     return false; 
 } 
 
-void UARTTest::Log_Strain() {
+void UARTTest::Log_Strain(uint32_t *strain_array) {
     
     struct log_Strain1 pkt1 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG1),
         time_us :   AP_HAL::micros64(),
-        v1      :   1,
-        v2      :   2,
-        v3      :   3,
-        v4      :   4,
-        v5      :   5,
-        v6      :   6,
-        v7      :   7,
-        v8      :   8,
-        v9      :   9,
-        v10     :   10,
-        v11     :   11
+        v1      :   strain_array[0],
+        v2      :   strain_array[1],
+        v3      :   strain_array[2],
+        v4      :   strain_array[3],
+        v5      :   strain_array[4],
+        v6      :   strain_array[5],
+        v7      :   strain_array[6],
+        v8      :   strain_array[7],
+        v9      :   strain_array[8],
+        v10     :   strain_array[9],
+        v11     :   strain_array[10]
     };
 
     struct log_Strain2 pkt2 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG2),
         time_us :   AP_HAL::micros64(),
-        v12     :   12,
-        v13     :   13,
-        v14     :   14,
-        v15     :   15,
-        v16     :   16,
-        v17     :   17,
-        v18     :   18,
-        v19     :   19,
-        v20     :   20,
-        v21     :   21,
-        v22     :   22,
+        v12     :    strain_array[11],
+        v13     :    strain_array[12],
+        v14     :    strain_array[13],
+        v15     :    strain_array[14],
+        v16     :    strain_array[15],
+        v17     :    strain_array[16],
+        v18     :    strain_array[17],
+        v19     :    strain_array[18],
+        v20     :    strain_array[19],
+        v21     :    strain_array[20],
+        v22     :    strain_array[21],
     };
 
     struct log_Strain3 pkt3 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG3),
         time_us :   AP_HAL::micros64(),
-        v23     :   23,
-        v24     :   24,
-        v25     :   25,
-        v26     :   26,
-        v27     :   27,
-        v28     :   28,
-        v29     :   29,
-        v30     :   30,
-        v31     :   31,
-        v32     :   32
+        v23     :   strain_array[22],
+        v24     :   strain_array[23],
+        v25     :   strain_array[24],
+        v26     :   strain_array[25],
+        v27     :   strain_array[26],
+        v28     :   strain_array[27],
+        v29     :   strain_array[28],
+        v30     :   strain_array[29],
+        v31     :   strain_array[30],
+        v32     :   strain_array[31]
     };
 
     AP::logger().WriteBlock(&pkt1, sizeof(pkt1));
