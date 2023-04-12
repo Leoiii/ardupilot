@@ -680,11 +680,55 @@ struct PACKED log_VER {
     uint16_t _APJ_BOARD_ID;
 };
 
-struct PACKED log_Strain {
+// only 16 pieces of information can be sent per packet at a time 
+// strain data needs to be split into 3 packets (11-11-10 split)
+struct PACKED log_Strain1 {
   LOG_PACKET_HEADER;
   uint64_t time_us;
-  uint32_t value;
+  uint32_t v1;
+  uint32_t v2;
+  uint32_t v3;
+  uint32_t v4;
+  uint32_t v5;
+  uint32_t v6;
+  uint32_t v7;
+  uint32_t v8;
+  uint32_t v9;
+  uint32_t v10;
+  uint32_t v11;
 };
+
+struct PACKED log_Strain2 {
+  LOG_PACKET_HEADER;
+  uint64_t time_us;
+  uint32_t v12;
+  uint32_t v13;
+  uint32_t v14;
+  uint32_t v15;
+  uint32_t v16;
+  uint32_t v17;
+  uint32_t v18;
+  uint32_t v19;
+  uint32_t v20;
+  uint32_t v21;
+  uint32_t v22;
+};
+
+struct PACKED log_Strain3 {
+  LOG_PACKET_HEADER;
+  uint64_t time_us;
+  uint32_t v23;
+  uint32_t v24;
+  uint32_t v25;
+  uint32_t v26;
+  uint32_t v27;
+  uint32_t v28;
+  uint32_t v29;
+  uint32_t v30;
+  uint32_t v31;
+  uint32_t v32; 
+};
+
 
 
 // FMT messages define all message formats other than FMT
@@ -1343,8 +1387,21 @@ LOG_STRUCTURE_FROM_AIS \
       "VER",   "QBHBBBBIZH", "TimeUS,BT,BST,Maj,Min,Pat,FWT,GH,FWS,APJ", "s---------", "F---------", false }, \
     { LOG_MOTBATT_MSG, sizeof(log_MotBatt), \
       "MOTB", "QfffffB",  "TimeUS,LiftMax,BatVolt,ThLimit,ThrAvMx,ThrOut,FailFlags", "s------", "F------" , true }, \
-    { LOG_STRAIN_MSG, sizeof(log_Strain), \
-      "STR", "QI", "TimeUS,value", "s-", "F-"}
+    { LOG_STRAIN_MSG1, sizeof(log_Strain1), \
+      "STR1", "QIIIIIIIIIII", \
+       "TimeUS,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,v11", \
+        "s-----------", \
+        "F-----------"}, \
+    { LOG_STRAIN_MSG2, sizeof(log_Strain2), \
+      "STR2", "QIIIIIIIIIII", \
+       "TimeUS,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,v11", \
+        "s-----------", \
+        "F-----------"}, \
+    { LOG_STRAIN_MSG3, sizeof(log_Strain3), \
+      "STR3", "QIIIIIIIIII", \
+       "TimeUS,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10", \
+        "s----------", \
+        "F----------"}
 
 // message types 0 to 63 reserved for vehicle specific use
 
@@ -1431,7 +1488,9 @@ enum LogMessages : uint8_t {
     LOG_RCOUT2_MSG,
     LOG_RCOUT3_MSG,
     LOG_IDS_FROM_FENCE,
-    LOG_STRAIN_MSG,
+    LOG_STRAIN_MSG1,
+    LOG_STRAIN_MSG2,
+    LOG_STRAIN_MSG3,
 
     _LOG_LAST_MSG_
 };
