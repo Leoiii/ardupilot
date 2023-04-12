@@ -57,7 +57,9 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
 void UARTTest::parse_data() {
 
     for (uint8_t sensor = 0; sensor < NUM_SENSORSS; sensor++) {
-        strain_data[sensor] = read_buffer[sensor+3]<<24 | read_buffer[sensor+2]<<16 |read_buffer[sensor+1]<<8 |read_buffer[sensor];
+        strain_data[sensor] = read_buffer[(sensor*BYTES_PER_SENSOR)+2] | 
+                              read_buffer[(sensor*BYTES_PER_SENSOR)+1]<<8 | 
+                              read_buffer[sensor*BYTES_PER_SENSOR]<<16;
     }
 }
 
