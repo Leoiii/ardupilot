@@ -18,6 +18,8 @@ public:
 
     void init(const AP_SerialManager& serial_manager);
     void write_uart();
+    void Log_Strain();
+
     uint8_t counter = 0;
 
     char num = 47;
