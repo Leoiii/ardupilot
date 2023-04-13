@@ -116,7 +116,7 @@
 #define AP_SERIALMANAGER_MSP_BAUD           115200
 
 //custom strain reading protocol
-#define AP_SERIALMANAGER_STRAIN_BUFSIZE_RX  128 // assuming that this is in bytes
+#define AP_SERIALMANAGER_STRAIN_BUFSIZE_RX  96*2 // assuming that this is in bytes
 #define AP_SERIALMANAGER_STRAIN_BUFSIZE_TX  16
 #define AP_SERIALMANAGER_STRAIN_BAUD        115200
 

@@ -37,6 +37,8 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
     bool res = read_data();
     parse_data();
 
+    uart_write->write(available_bytes);
+
     //parse all data
     //parse_data();
 
@@ -78,16 +80,24 @@ void UARTTest::parse_data() {
 } */
 
 bool UARTTest::read_data(void) {
+    uint8_t b;
 
-    available_bytes = uart_read->available();
+    available_bytes = uart_read->available(); // how many bytes of data are available in the serial buffer?
 
-    if (available_bytes == 96) { //check that we have received all bytes from strain data
-        for (uint8_t idx = 0; idx < available_bytes; idx++) {
-            read_buffer[idx] = uart_read->read();
+    if (available_bytes >= READ_BUFFER_SIZE+1) { //check that we have received all bytes from strain data. +1 is to check that we have also received start bit
+        for (uint8_t byte = 0; byte < (available_bytes - (READ_BUFFER_SIZE+1)); byte++) { //run through all available bytes
+            b = uart_read->read(); //read each byte in the buffer
+            if (b == 255){ // check if current byte is equal to start byte (0xFF)
+                for (uint8_t data_byte = 0; data_byte < READ_BUFFER_SIZE; data_byte++) {
+                    read_buffer[data_byte] = uart_read->read(); 
+                }
+                uart_read->flush();// flush all remaining data
+                return true; // we have been able to read an entire packet of data
+            }
         } 
-        return true;
-    }
-    return false; 
+        return false; // could not find start byte after looping through all available bytes
+    } 
+    return false; // not enough bytes available to warrant reading 
 } 
 
 void UARTTest::Log_Strain(uint32_t *strain_array) {

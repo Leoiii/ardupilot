@@ -5,7 +5,7 @@
 #include <AP_Logger/LogStructure.h>
 #define NUM_SENSORSS 32 // total number of strain sensors
 #define BYTES_PER_SENSOR 3 // bytes per sensor (uint32)
-#define READ_BUFFER_SIZE 128 // there are 32 sensors, each has 4 bytes of data
+#define READ_BUFFER_SIZE 96 // there are 32 sensors, each has 3 bytes of data
 
 #define WRITE_UART_IDX 5 
 
