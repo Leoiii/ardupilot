@@ -19,7 +19,10 @@
         "tuple": "cpp",
         "type_traits": "cpp",
         "utility": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "__hash_table": "cpp",
+        "locale": "cpp",
+        "__string": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false
 }
