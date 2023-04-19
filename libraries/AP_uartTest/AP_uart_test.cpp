@@ -50,7 +50,9 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
         }
         uart_write->write(available_bytes);
     }
-    available_bytes = 0; // reset available bytes for next timeS
+    available_bytes = 0; // reset available bytes for next time
+
+    crc_crc16_ibm
 
     Log_Strain(strain_data);
 
@@ -81,23 +83,34 @@ void UARTTest::parse_data() {
 
 bool UARTTest::read_data(void) {
     uint8_t b;
+    uint16_t crc_calculated, incoming_crc;
 
     available_bytes = uart_read->available(); // how many bytes of data are available in the serial buffer?
 
-    if (available_bytes >= READ_BUFFER_SIZE+1) { //check that we have received all bytes from strain data. +1 is to check that we have also received start bit
+    if (available_bytes >= READ_BUFFER_SIZE+1) { //check that we have received all bytes from strain data. +1 is to check that we have also received start byte
         for (uint8_t byte = 0; byte < (available_bytes - (READ_BUFFER_SIZE+1)); byte++) { //run through all available bytes
             b = uart_read->read(); //read each byte in the buffer
             if (b == 255){ // check if current byte is equal to start byte (0xFF)
                 for (uint8_t data_byte = 0; data_byte < READ_BUFFER_SIZE; data_byte++) {
                     read_buffer[data_byte] = uart_read->read(); 
                 }
+                incoming_crc = uart_read->read();
+
                 uart_read->flush();// flush all remaining data
-                return true; // we have been able to read an entire packet of data
+
+                crc_calculated = crc_crc16_ibm(0, bufferp, NUM_SENSORSS * BYTES_PER_SENSOR); 
+
+                if (incoming_crc == crc_calculated) {
+                    return true; // we have been able to read an entire packet of data
+                } else {
+                    //set some flag that is a member of the class
+                    return false;
+                }
             }
         } 
         return false; // could not find start byte after looping through all available bytes
     } 
-    return false; // not enough bytes available to warrant reading 
+    return false; // not enough bytes available. Won't get a full reading
 } 
 
 void UARTTest::Log_Strain(uint32_t *strain_array) {
