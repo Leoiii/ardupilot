@@ -44,7 +44,7 @@ extern const AP_HAL::HAL& hal;
 #define SERIAL4_PROTOCOL SerialProtocol_Strain
 #define SERIAL4_BAUD AP_SERIALMANAGER_STRAIN_BAUD/1000
 #else
-#define SERIAL4_PROTOCOL SerialProtocol_Strain
+#define SERIAL4_PROTOCOL SerialProtocol_None
 #define SERIAL4_BAUD AP_SERIALMANAGER_MAVLINK_BAUD/1000
 #endif
 
@@ -60,7 +60,7 @@ extern const AP_HAL::HAL& hal;
 #define SERIAL6_PROTOCOL SerialProtocol_Strain
 #define SERIAL6_BAUD AP_SERIALMANAGER_STRAIN_BAUD/1000
 #else
-#define SERIAL6_PROTOCOL SerialProtocol_Strain
+#define SERIAL6_PROTOCOL SerialProtocol_None
 #define SERIAL6_BAUD AP_SERIALMANAGER_MAVLINK_BAUD/1000
 #endif
 
@@ -529,8 +529,8 @@ void AP_SerialManager::init()
 #endif
                 case SerialProtocol_Strain:
                     uart->begin(state[i].baudrate(),
-                    AP_SERIALMANAGER_STRAIN_BUFSIZE_RX,
-                    AP_SERIALMANAGER_STRAIN_BUFSIZE_TX);
+                                AP_SERIALMANAGER_STRAIN_BUFSIZE_RX,
+                                AP_SERIALMANAGER_STRAIN_BUFSIZE_TX);
                     uart->set_unbuffered_writes(true);
                     uart->set_flow_control(AP_HAL::UARTDriver::flow_control::FLOW_CONTROL_DISABLE);
 

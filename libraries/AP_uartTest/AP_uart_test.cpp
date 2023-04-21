@@ -2,9 +2,6 @@
 
 extern const AP_HAL::HAL& hal;
 
-void UARTTest::init(const AP_SerialManager& serial_manager) {
-    // setup UARTx here
-
     // serial mappings according to: https://ardupilot.org/plane/docs/common-holybro-pixhawk6X.html
     //SERIAL0 -> USB
     //SERIAL1 -> UART7 (Telem1) RTS/CTS pins
@@ -16,47 +13,24 @@ void UARTTest::init(const AP_SerialManager& serial_manager) {
     //SERIAL7 -> USART3 (Debug)
     //SERIAL8 -> USB 
 
+void UARTTest::init(const AP_SerialManager& serial_manager) {
+
     //setup UART
     uart_read = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Strain, 0);
     uart_write = serial_manager.find_serial(AP_SerialManager::SerialProtocol_Strain, 1);
-    
-    //uart = hal.serial(6);
-    //uart->set_blocking_writes(true);
-    
-    //uart->begin(baud);
-    //uart->printf("init");
+
+    //protocol setting are set in AP_SerialManager.h and AP_SerialManager.cpp
 }
 
 void UARTTest::write_uart() { // this is the function that main calls all the time
-    // print counter to UARTx here
-    //uart->printf("%s",&num);
-    //uart->write(&num);
-    //const ssize_t ret = uart->write(&counter, dataSize);
 
     //read all data
     bool res = read_data();
-    parse_data();
-
-    uart_write->write(available_bytes);
-
-    //parse all data
-    //parse_data();
-
-    //write all data
-    //for (uint8_t i = 0; i < 128; i++) {
+    
     if (res) {
-        for (uint8_t i = 0; i<available_bytes; i++) {
-            uart_write->write(read_buffer[i]);
-        }
-        uart_write->write(available_bytes);
+        parse_data(); //parse data bytes into uint32_t
+        log_strain(strain_data); // log strain data to SD card
     }
-    available_bytes = 0; // reset available bytes for next time
-
-    crc_crc16_ibm
-
-    Log_Strain(strain_data);
-
-    //}
 }
 
 void UARTTest::parse_data() {
@@ -68,18 +42,6 @@ void UARTTest::parse_data() {
     }
 }
 
-/*bool UARTTest::read_data(void) {
-
-    uint32_t nbytes = uart_read->available();
-
-    if (nbytes != AP_SERIALMANAGER_STRAIN_BUFSIZE_RX) { //check that we have received all bytes from strain data
-        for (uint8_t idx = 0; idx < nbytes; idx++) {
-            read_buffer[idx] = uart_read->read();
-        } 
-        return true;
-    }
-    return false; 
-} */
 
 bool UARTTest::read_data(void) {
     uint8_t b;
@@ -87,33 +49,40 @@ bool UARTTest::read_data(void) {
 
     available_bytes = uart_read->available(); // how many bytes of data are available in the serial buffer?
 
-    if (available_bytes >= READ_BUFFER_SIZE+1) { //check that we have received all bytes from strain data. +1 is to check that we have also received start byte
-        for (uint8_t byte = 0; byte < (available_bytes - (READ_BUFFER_SIZE+1)); byte++) { //run through all available bytes
+    if (available_bytes >= READ_BUFFER_SIZE+2) { //check that we have received all bytes from strain data. +2 is to check that we have also received start byte and crc byte
+        for (uint8_t byte = 0; byte < (available_bytes - (READ_BUFFER_SIZE+2)); byte++) { //run through available bytes
             b = uart_read->read(); //read each byte in the buffer
-            if (b == 255){ // check if current byte is equal to start byte (0xFF)
-                for (uint8_t data_byte = 0; data_byte < READ_BUFFER_SIZE; data_byte++) {
+            if (b == 255){ // check if current byte is equal to start byte (0xFF). This byte gets discarded
+                for (uint8_t data_byte = 0; data_byte < READ_BUFFER_SIZE; data_byte++) { //read data packet
                     read_buffer[data_byte] = uart_read->read(); 
                 }
                 incoming_crc = uart_read->read();
 
-                uart_read->flush();// flush all remaining data
+                uart_read->flush();// flush all remaining data waiting in buffer, we have what we need for a reading
 
-                crc_calculated = crc_crc16_ibm(0, bufferp, NUM_SENSORSS * BYTES_PER_SENSOR); 
+                crc_calculated = crc8_maxim(read_bufferp, READ_BUFFER_SIZE); 
+                read_bufferp = &read_buffer[0]; //reset pointer
 
                 if (incoming_crc == crc_calculated) {
-                    return true; // we have been able to read an entire packet of data
+                    available_bytes = 0; // reset available bytes for next time
+                    return true; // we have been able to read an entire packet of data correctly
                 } else {
                     //set some flag that is a member of the class
-                    return false;
+
+                    //augment data for testing purposes - this informs us that data was corrupted
+                    for (uint16_t i = 0; i < READ_BUFFER_SIZE; i++) {
+                        read_buffer[i] = 0;
+                    }
+                    return true; // read an entire packet, but crc does not match
                 }
             }
         } 
-        return false; // could not find start byte after looping through all available bytes
+        return false; // could not find start byte after looping through available bytes
     } 
     return false; // not enough bytes available. Won't get a full reading
 } 
 
-void UARTTest::Log_Strain(uint32_t *strain_array) {
+void UARTTest::log_strain(uint32_t *strain_array) {
     
     struct log_Strain1 pkt1 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG1),

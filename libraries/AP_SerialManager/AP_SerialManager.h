@@ -116,9 +116,9 @@
 #define AP_SERIALMANAGER_MSP_BAUD           115200
 
 //custom strain reading protocol
-#define AP_SERIALMANAGER_STRAIN_BUFSIZE_RX  96*3 // assuming that this is in bytes. Three times the buffer size should be sufficient
-#define AP_SERIALMANAGER_STRAIN_BUFSIZE_TX  16
-#define AP_SERIALMANAGER_STRAIN_BAUD        115200
+#define AP_SERIALMANAGER_STRAIN_BUFSIZE_RX  (96+2)*3 // 96 bytes + 1 start byte + 1 CRC byte. Three times the buffer size should be sufficient.
+#define AP_SERIALMANAGER_STRAIN_BUFSIZE_TX  16 // Not transferring much data, so no need to have large buffer here
+#define AP_SERIALMANAGER_STRAIN_BAUD        19200
 
 class AP_SerialManager {
 public:

@@ -5,7 +5,7 @@
 #include <AP_Logger/LogStructure.h>
 #define NUM_SENSORSS 32 // total number of strain sensors
 #define BYTES_PER_SENSOR 3 // bytes per sensor (uint32)
-#define READ_BUFFER_SIZE 96*3 // there are 32 sensors, each has 3 bytes of data
+#define READ_BUFFER_SIZE 96 // there are 32 sensors, each has 3 bytes of data
 
 #define WRITE_UART_IDX 5 
 
@@ -19,13 +19,11 @@ public:
 
     void init(const AP_SerialManager& serial_manager);
     void write_uart();
-    void Log_Strain(uint32_t *strain_array);
+    void log_strain(uint32_t *strain_array);
 
     uint8_t counter = 0;
 
     //add some flag for crc here
-
-    char num = 47;
 
     static const uint32_t baud = 57600;
     AP_HAL::UARTDriver *uart_write = nullptr;
@@ -37,7 +35,7 @@ private:
     bool read_data(void); // read data from uart buffers
     void parse_data(void); // parse uart data into strain data
     uint8_t read_buffer[READ_BUFFER_SIZE];
-    uint8_t *bufferp = &read_buffer;
+    uint8_t *read_bufferp = &read_buffer[0];
     uint32_t strain_data[NUM_SENSORSS];   
     uint8_t available_bytes = 0;
 
