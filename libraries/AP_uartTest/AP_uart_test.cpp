@@ -25,14 +25,14 @@ void UARTTest::init(const AP_SerialManager& serial_manager) {
 void UARTTest::write_uart() { // this is the function that main calls all the time
 
     //read all data
-    bool res = read_data();
+    uint8_t res = read_data();
     
-    if (res) {
+    if (res == 1) {
         parse_data(); //parse data bytes into uint32_t
         log_strain(strain_data); // log strain data to SD card
         return;
     } else {
-        log_empty();
+        log_empty(res);
     }
 
 }
@@ -46,30 +46,31 @@ void UARTTest::parse_data() {
     }
 }
 
-
-bool UARTTest::read_data(void) {
+uint16_t UARTTest::read_data(void) {
     uint8_t b;
     uint16_t crc_calculated, incoming_crc;
-
+    
+    counter = 0;
     available_bytes = uart_read->available(); // how many bytes of data are available in the serial buffer?
 
     if (available_bytes >= READ_BUFFER_SIZE+2) { //check that we have received all bytes from strain data. +2 is to check that we have also received start byte and crc byte
         for (uint8_t byte = 0; byte < (available_bytes - (READ_BUFFER_SIZE+2)); byte++) { //run through available bytes
             b = uart_read->read(); //read each byte in the buffer
+            counter++;
             if (b == 255){ // check if current byte is equal to start byte (0xFF). This byte gets discarded
                 for (uint8_t data_byte = 0; data_byte < READ_BUFFER_SIZE; data_byte++) { //read data packet
                     read_buffer[data_byte] = uart_read->read(); 
                 }
                 incoming_crc = uart_read->read();
 
-                uart_read->flush();// flush all remaining data waiting in buffer, we have what we need for a reading
+                //uart_read->flush();// flush all remaining data waiting in buffer, we have what we need for a reading
 
                 crc_calculated = crc8_maxim(read_bufferp, READ_BUFFER_SIZE); 
                 read_bufferp = &read_buffer[0]; //reset pointer
 
                 if (incoming_crc == crc_calculated) {
-                    available_bytes = 0; // reset available bytes for next time
-                    return true; // we have been able to read an entire packet of data correctly
+                    //available_bytes = 0; // reset available bytes for next time
+                    return 1; // we have been able to read an entire packet of data correctly
                 } else {
                     //set some flag that is a member of the class
 
@@ -77,13 +78,13 @@ bool UARTTest::read_data(void) {
                     for (uint16_t i = 0; i < READ_BUFFER_SIZE; i++) {
                         read_buffer[i] = 0;
                     }
-                    return true; // read an entire packet, but crc does not match
+                    return 2; // read an entire packet, but crc does not match
                 }
             }
         } 
-        return false; // could not find start byte after looping through available bytes
+        return 3; // could not find start byte after looping through available bytes
     } 
-    return false; // not enough bytes available. Won't get a full reading
+    return available_bytes ; // not enough bytes available. Won't get a full reading
 } 
 
 void UARTTest::log_strain(uint32_t *strain_array) {
@@ -91,8 +92,9 @@ void UARTTest::log_strain(uint32_t *strain_array) {
     struct log_Strain1 pkt1 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG1),
         time_us :   AP_HAL::micros64(),
-        v1      :   strain_array[0],
-        v2      :   strain_array[1],
+        //v1      :   strain_array[0],
+        v1      :   available_bytes,
+        v2      :   counter,
         v3      :   strain_array[2],
         v4      :   strain_array[3],
         v5      :   strain_array[4],
@@ -140,53 +142,53 @@ void UARTTest::log_strain(uint32_t *strain_array) {
     AP::logger().WriteBlock(&pkt3, sizeof(pkt3));
 }
 
-void UARTTest::log_empty() {
+void UARTTest::log_empty(uint16_t val) {
     
     struct log_Strain1 pkt1 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG1),
         time_us :   AP_HAL::micros64(),
-        v1      :   0,
-        v2      :   0,
-        v3      :   0,
-        v4      :   0,
-        v5      :   0,
-        v6      :   0,
-        v7      :   0,
-        v8      :   0,
-        v9      :   0,
-        v10     :   0,
-        v11     :   0
+        v1      :   val,
+        v2      :   val,
+        v3      :   val,
+        v4      :   val,
+        v5      :   val,
+        v6      :   val,
+        v7      :   val,
+        v8      :   val,
+        v9      :   val,
+        v10     :   val,
+        v11     :   val
     };
 
     struct log_Strain2 pkt2 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG2),
         time_us :   AP_HAL::micros64(),
-        v12     :    0,
-        v13     :    0,
-        v14     :    0,
-        v15     :    0,
-        v16     :    0,
-        v17     :    0,
-        v18     :    0,
-        v19     :    0,
-        v20     :    0,
-        v21     :    0,
-        v22     :    0
+        v12     :    val,
+        v13     :    val,
+        v14     :    val,
+        v15     :    val,
+        v16     :    val,
+        v17     :    val,
+        v18     :    val,
+        v19     :    val,
+        v20     :    val,
+        v21     :    val,
+        v22     :    val
     };
 
     struct log_Strain3 pkt3 = {
         LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG3),
         time_us :   AP_HAL::micros64(),
-        v23     :   0,
-        v24     :   0,
-        v25     :   0,
-        v26     :   0,
-        v27     :   0,
-        v28     :   0,
-        v29     :   0,
-        v30     :   0,
-        v31     :   0,
-        v32     :   0
+        v23     :   val,
+        v24     :   val,
+        v25     :   val,
+        v26     :   val,
+        v27     :   val,
+        v28     :   val,
+        v29     :   val,
+        v30     :   val,
+        v31     :   val,
+        v32     :   val
     };
 
     AP::logger().WriteBlock(&pkt1, sizeof(pkt1));
