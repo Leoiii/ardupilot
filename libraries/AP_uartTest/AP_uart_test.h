@@ -20,6 +20,7 @@ public:
     void init(const AP_SerialManager& serial_manager);
     void write_uart();
     void log_strain(uint32_t *strain_array);
+    void log_empty();
 
     uint8_t counter = 0;
 

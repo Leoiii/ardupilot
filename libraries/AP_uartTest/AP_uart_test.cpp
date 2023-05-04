@@ -30,7 +30,11 @@ void UARTTest::write_uart() { // this is the function that main calls all the ti
     if (res) {
         parse_data(); //parse data bytes into uint32_t
         log_strain(strain_data); // log strain data to SD card
+        return;
+    } else {
+        log_empty();
     }
+
 }
 
 void UARTTest::parse_data() {
@@ -129,6 +133,60 @@ void UARTTest::log_strain(uint32_t *strain_array) {
         v30     :   strain_array[29],
         v31     :   strain_array[30],
         v32     :   strain_array[31]
+    };
+
+    AP::logger().WriteBlock(&pkt1, sizeof(pkt1));
+    AP::logger().WriteBlock(&pkt2, sizeof(pkt2));
+    AP::logger().WriteBlock(&pkt3, sizeof(pkt3));
+}
+
+void UARTTest::log_empty() {
+    
+    struct log_Strain1 pkt1 = {
+        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG1),
+        time_us :   AP_HAL::micros64(),
+        v1      :   0,
+        v2      :   0,
+        v3      :   0,
+        v4      :   0,
+        v5      :   0,
+        v6      :   0,
+        v7      :   0,
+        v8      :   0,
+        v9      :   0,
+        v10     :   0,
+        v11     :   0
+    };
+
+    struct log_Strain2 pkt2 = {
+        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG2),
+        time_us :   AP_HAL::micros64(),
+        v12     :    0,
+        v13     :    0,
+        v14     :    0,
+        v15     :    0,
+        v16     :    0,
+        v17     :    0,
+        v18     :    0,
+        v19     :    0,
+        v20     :    0,
+        v21     :    0,
+        v22     :    0
+    };
+
+    struct log_Strain3 pkt3 = {
+        LOG_PACKET_HEADER_INIT(LOG_STRAIN_MSG3),
+        time_us :   AP_HAL::micros64(),
+        v23     :   0,
+        v24     :   0,
+        v25     :   0,
+        v26     :   0,
+        v27     :   0,
+        v28     :   0,
+        v29     :   0,
+        v30     :   0,
+        v31     :   0,
+        v32     :   0
     };
 
     AP::logger().WriteBlock(&pkt1, sizeof(pkt1));

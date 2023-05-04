@@ -62,6 +62,7 @@ const AP_Scheduler::Task Plane::scheduler_tasks[] = {
     SCHED_TASK(read_radio,             50,    100,   6),
     SCHED_TASK(check_short_failsafe,   50,    100,   9),
     SCHED_TASK(update_speed_height,    50,    200,  12),
+    SCHED_TASK_CLASS(UARTTest, &plane.uarttest, write_uart, 25, 100, 13),
     SCHED_TASK(update_throttle_hover, 100,     90,  24),
     SCHED_TASK(read_control_switch,     7,    100,  27),
     SCHED_TASK(update_GPS_50Hz,        50,    300,  30),
@@ -75,8 +76,6 @@ const AP_Scheduler::Task Plane::scheduler_tasks[] = {
     SCHED_TASK(afs_fs_check,           10,    100,  51),
 #endif
     SCHED_TASK(ekf_check,              10,     75,  54),
-    
-    SCHED_TASK_CLASS(UARTTest, &plane.uarttest, write_uart, 25, 100, 55),
     //SCHED_TASK_CLASS(UARTTest, &plane.uarttest, Log_Strain,  5, 200, 56),
     SCHED_TASK_CLASS(GCS,            (GCS*)&plane._gcs,       update_receive,   300,  500,  57),
     SCHED_TASK_CLASS(GCS,            (GCS*)&plane._gcs,       update_send,      300,  750,  60),

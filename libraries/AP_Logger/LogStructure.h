@@ -1394,12 +1394,12 @@ LOG_STRUCTURE_FROM_AIS \
         "F-----------"}, \
     { LOG_STRAIN_MSG2, sizeof(log_Strain2), \
       "STR2", "QIIIIIIIIIII", \
-       "TimeUS,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10,v11", \
+       "TimeUS,v12,v13,v14,v15,v16,v17,v18,v19,v20,v21,v22", \
         "s-----------", \
         "F-----------"}, \
     { LOG_STRAIN_MSG3, sizeof(log_Strain3), \
       "STR3", "QIIIIIIIIII", \
-       "TimeUS,v1,v2,v3,v4,v5,v6,v7,v8,v9,v10", \
+       "TimeUS,v23,v24,v25,v26,v27,v28,v29,v30,v31,v32", \
         "s----------", \
         "F----------"}
 
